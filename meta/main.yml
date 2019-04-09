@@ -1,4 +1,16 @@
 ---
 dependencies:
-- role: nginx-handlers
+- role: mmcnl.nginx_handlers
 - role: mmcnl.monit_handlers
+
+galaxy_info:
+  role_name: nginx_server
+  author: mmcnl
+  description: "install and secure nginx server"
+  license: MIT
+  min_ansible_version: 2.7
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+  galaxy_tags: []
