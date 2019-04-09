@@ -1,0 +1,19 @@
+# -*- mode: conf -*-
+# {{ ansible_managed }}
+
+[nginx-http-auth]
+enabled  = true
+
+[nginx-botsearch]
+enabled  = true
+
+[nginx-4xx]
+enabled  = true
+port     = http,https
+filter   = nginx-4xx
+logpath  = /var/log/nginx/access.log
+
+# ban for 10 minutes if 5 bad requests in 5 minutes
+findtime = 300
+maxretry = 5
+bantime  = 600

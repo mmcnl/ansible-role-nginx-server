@@ -1,0 +1,6 @@
+# -*- mode: conf -*-
+# {{ ansible_managed }}
+
+[Definition]
+failregex = ^<HOST>.*"(GET|POST|HEAD|PROPFIND)[^"]+ HTTP\/\d\.\d" (444|403|400|401) .*$
+ignoreregex =

@@ -1,0 +1,109 @@
+---
+- name: install apt packages for nginx
+  apt:
+    pkg:
+      - ssl-cert
+      - nginx
+      - goaccess # for log parsing
+    cache_valid_time: 86400 # 1 day
+
+- name: remove default site
+  file:
+    dest: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: remove default site html dir
+  file:
+    dest: "{{ nginx_root_dir }}/html"
+    state: absent
+
+- name: copy fake certificate for invalid requests
+  copy:
+    src: "{{ item }}"
+    dest: /etc/nginx/
+  with_items:
+    - fake.cert
+    - fake.key
+  notify: restart nginx
+
+- name: copy base nginx conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+- name: create directory for shared config
+  file:
+    path: /etc/nginx/global
+    state: directory
+    mode: 0755
+
+- name: copy shared config files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/nginx/global/{{ item }}"
+  with_items:
+    - ssl.conf
+    - restrictions.conf
+  notify: restart nginx
+
+- name: update nginx systemd service config
+  template:
+    src: nginx.service.j2
+    dest: /lib/systemd/system/nginx.service
+  notify: restart nginx
+
+- name: configure web firewall
+  ufw: rule={{ item.rule }} port={{ item.port }} proto={{ item.proto }}
+  with_items:
+    - { rule: 'allow', port: '80', proto: 'tcp' }
+    - { rule: 'allow', port: '443', proto: 'tcp' }
+  notify:
+    - restart ufw
+
+- name: Ensure nginx service always running
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Check if goaccess installed
+  stat:
+    path: /etc/goaccess.conf
+  register: goaccess_config
+
+- name: Update goaccess config
+  when: goaccess_config.stat.exists
+  lineinfile:
+    path: /etc/goaccess.conf
+    line: "log-format COMBINED"
+
+- name: Check if fail2ban installed
+  stat:
+    path: /etc/fail2ban
+  register: fail2ban_config
+
+- name: "set up fail2ban for nginx"
+  when: fail2ban_config.stat.exists
+  block:
+  - name: set up custom nginx filter
+    template:
+      src: nginx-4xx.conf.j2
+      dest: /etc/fail2ban/filter.d/nginx-4xx.conf
+      mode: 0644
+    notify: restart fail2ban
+
+  - name: enable nginx jails
+    template:
+      src: nginx-jails.conf.j2
+      dest: /etc/fail2ban/jail.d/nginx-jails.conf
+    notify: restart fail2ban
+
+- name: watch nginx with monit
+  template:
+    src: nginx-monit.j2
+    dest: /etc/monit/conf.d/nginx
+    mode: 0600
+  notify: reload monit
