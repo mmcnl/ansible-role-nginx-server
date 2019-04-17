@@ -15,7 +15,7 @@
 
 - name: remove default site html dir
   file:
-    dest: "{{ nginx_root_dir }}/html"
+    dest: /var/www/html
     state: absent
 
 - name: copy fake certificate for invalid requests
