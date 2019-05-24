@@ -42,10 +42,10 @@
 - name: copy shared config files
   template:
     src: "{{ item }}.j2"
-    dest: "/etc/nginx/global/{{ item }}"
+    dest: "/etc/nginx/global/{{ item | basename }}"
   with_items:
-    - ssl.conf
     - restrictions.conf
+    - ssl.conf
   notify: restart nginx
 
 - name: update nginx systemd service config

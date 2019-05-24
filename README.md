@@ -5,8 +5,8 @@
         - import_role:
             name: mmcnl.nginx_server
           vars:
-            ssl_cert_dir: /etc/letsencrypt/live/example.com
-            ssl_cert_use_snakeoil: no
+            ssl_certificate: /etc/letsencrypt/live/example.com/fullchain.pem
+            ssl_certificate_key: /etc/letsencrypt/live/example.com/privkey.pem
 
 ## License
 

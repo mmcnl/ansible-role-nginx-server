@@ -37,8 +37,12 @@ http {
     listen [::]:80 default_server ipv6only=on;
     listen 443 default_server ssl;
     listen [::]:443 ipv6only=on default_server ssl;
+
+        # use a fake cert that doesn't expose our real domain name (e.g. if site
+        # is being accessed via IP address not domain)
     ssl_certificate /etc/nginx/fake.cert;
     ssl_certificate_key /etc/nginx/fake.key;
+
     return 444; # close connection without response; see
                 # https://httpstatuses.com/444
   }
