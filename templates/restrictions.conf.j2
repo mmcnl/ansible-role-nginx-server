@@ -2,28 +2,22 @@
 # {{ ansible_managed }}
 
 location = /favicon.ico {
-  log_not_found off;
-  access_log off;
+    log_not_found off;
+    access_log off;
 }
 
 location = /robots.txt {
-  allow all;
-  log_not_found off;
-  access_log off;
+    allow all;
+    log_not_found off;
+    access_log off;
 }
 
 # Don't serve hidden files (eg .git) but allow .well-known (for Let's Encrypt)
 location ~ /\.(?!well-known).* {
-  return 444; # close connection without response; see
-              # https://httpstatuses.com/444
-}
-
-# Don't serve SQL dump files that may be erroneously present
-location ~* \.(sql|mysqldump)$ {
-  return 444;
+    return 444; # close connection without response; see
+    # https://httpstatuses.com/444
 }
 
 location ~ /\.ht { deny all; }
 location ~ \.j2$ { deny all; }
-location ~* readme.* { deny all; }
 location ~ debug\.log { deny all; }
