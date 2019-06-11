@@ -13,7 +13,7 @@ port     = http,https
 filter   = nginx-4xx
 logpath  = /var/log/nginx/access.log
 
-# ban for 10 minutes if 5 bad requests in 5 minutes
-findtime = 300
-maxretry = 5
+# ban for 10 minutes if 12 bad requests in 1 minute
+findtime = 60
+maxretry = 12
 bantime  = 600
