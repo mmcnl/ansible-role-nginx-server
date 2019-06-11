@@ -57,8 +57,8 @@
 - name: configure web firewall
   ufw: rule={{ item.rule }} port={{ item.port }} proto={{ item.proto }}
   with_items:
-    - { rule: 'allow', port: '80', proto: 'tcp' }
-    - { rule: 'allow', port: '443', proto: 'tcp' }
+    - {rule: 'allow', port: '80', proto: 'tcp'}
+    - {rule: 'allow', port: '443', proto: 'tcp'}
   notify:
     - restart ufw
 
@@ -93,18 +93,18 @@
 - name: "set up fail2ban for nginx"
   when: fail2ban_config.stat.exists
   block:
-  - name: set up custom nginx filter
-    template:
-      src: nginx-4xx.conf.j2
-      dest: /etc/fail2ban/filter.d/nginx-4xx.conf
-      mode: 0644
-    notify: restart fail2ban
+    - name: set up custom nginx filter
+      template:
+        src: nginx-4xx.conf.j2
+        dest: /etc/fail2ban/filter.d/nginx-4xx.conf
+        mode: 0644
+      notify: restart fail2ban
 
-  - name: enable nginx jails
-    template:
-      src: nginx-jails.conf.j2
-      dest: /etc/fail2ban/jail.d/nginx-jails.conf
-    notify: restart fail2ban
+    - name: enable nginx jails
+      template:
+        src: nginx-jails.conf.j2
+        dest: /etc/fail2ban/jail.d/nginx-jails.conf
+      notify: restart fail2ban
 
 - name: watch nginx with monit
   template:
