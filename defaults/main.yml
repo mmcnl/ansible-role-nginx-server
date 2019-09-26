@@ -3,4 +3,8 @@ ssl_certificate: /etc/ssl/certs/ssl-cert-snakeoil.pem
 ssl_certificate_key: /etc/ssl/private/ssl-cert-snakeoil.key
 
 nginx_denied_user_agents: []
-nginx_denied_locations: []
+nginx_denied_locations:
+  - /\.(?!well-known).* # deny hidden files but allow Let's Encrypt
+  - \.j2$ # ansible templates
+  - /phpmyadmin # common target
+  - mytag_js.php # common exploit
