@@ -1,0 +1,17 @@
+# -*- mode: nginx -*-
+# {{ ansible_managed }}
+
+map $request_uri $denied_location {
+    default 0;
+    {% for location in nginx_denied_locations %}
+    ~{{ location }} 1;
+    {% endfor %}
+}
+
+# http://ask.xmodulo.com/block-specific-user-agents-nginx-web-server.html
+map $http_user_agent $denied_user_agent {
+    default 0;
+    {% for user_agent in nginx_denied_user_agents  %}
+    ~{{ user_agent }} 1;
+    {% endfor %}
+}

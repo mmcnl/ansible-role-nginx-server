@@ -9,11 +9,20 @@ enabled  = true
 
 [nginx-4xx]
 enabled  = true
-port     = http,https
+port = http,https
 filter   = nginx-4xx
 logpath  = /var/log/nginx/access.log
 
-# ban for 10 minutes if 12 bad requests in 1 minute
-findtime = 60
-maxretry = 12
+maxretry = 10
+findtime = 600
+bantime  = 600
+
+[nginx-errors]
+enabled  = true
+port = http,https
+filter   = nginx-errors
+logpath  = /var/log/nginx/error.log
+
+maxretry = 10
+findtime = 600
 bantime  = 600

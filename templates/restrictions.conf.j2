@@ -12,12 +12,7 @@ location = /robots.txt {
     access_log off;
 }
 
-# Don't serve hidden files (eg .git) but allow .well-known (for Let's Encrypt)
-location ~ /\.(?!well-known).* {
-    return 444; # close connection without response; see
-    # https://httpstatuses.com/444
-}
-
-location ~ /\.ht { deny all; }
-location ~ \.j2$ { deny all; }
-location ~ debug\.log { deny all; }
+# these vars are set up in /etc/nginx/global/custom_vars.conf
+# 444 means close connection without sending response header
+if ($denied_location) { return 444; }
+if ($denied_user_agent) { return 444; }
