@@ -56,12 +56,17 @@
   notify: restart nginx
 
 - name: configure web firewall
-  ufw: rule={{ item.rule }} port={{ item.port }} proto={{ item.proto }}
+  ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment }}"
   with_items:
-    - {rule: 'allow', port: '80', proto: 'tcp'}
-    - {rule: 'allow', port: '443', proto: 'tcp'}
+    - {rule: "allow", port: "80", proto: "tcp", comment: "http"}
+    - {rule: "allow", port: "443", proto: "tcp", comment: "https"}
   notify:
     - restart ufw
+  tags: ufw
 
 - name: Ensure nginx service always running
   systemd:
