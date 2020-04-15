@@ -21,6 +21,21 @@
     dest: /var/www/html
     state: absent
 
+# as of 2020, macOS is not accepting certs that have expiration greater than 825
+# days: https://support.apple.com/en-us/HT210176
+- name: update self-signed cert generation script to set valid expiration date
+  replace:
+    path: /usr/sbin/make-ssl-cert
+    regexp: '^(.*) -days 3650 (.*)$'
+    replace: '\1 -days 825 \2'
+  register: cert_generation_script
+
+- name: regenerate self-signed cert
+  command: |
+    make-ssl-cert generate-default-snakeoil --force-overwrite
+  when: cert_generation_script.changed
+  notify: restart nginx
+
 - name: copy fake certificate for invalid requests
   copy:
     src: "{{ item }}"
